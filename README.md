@@ -1,26 +1,87 @@
 <p align="center">
-  <img src="assets/ascii-face.svg" width="480" alt="ascii terminal art" />
+  <img src="assets/ascii-face.svg" width="520" alt="ASCII Terminal Portrait" />
 </p>
+
+<h1 align="center">Hi, I'm Ahmad Ali 👋</h1>
+
+<p align="center">
+  <b>Computer Science Student @ FAST-NUCES</b><br>
+  C++ • C# • Full-Stack Development • AI • Game Development
+</p>
+
+<p align="center">
+  <a href="mailto:ahmadaliofficial1155@gmail.com">
+    <img src="https://img.shields.io/badge/Email-ahmadaliofficial1155%40gmail.com-red?style=for-the-badge&logo=gmail&logoColor=white" />
+  </a>
+  &nbsp;
+  <a href="https://www.linkedin.com/in/ahmad-ali-745606385/">
+    <img src="https://img.shields.io/badge/LinkedIn-Ahmad%20Ali-blue?style=for-the-badge&logo=linkedin" />
+  </a>
+</p>
+
 ---
 
-### About me
+# 🚀 About Me
 
-- 🎓 2nd year student at **FAST-NUCES**
-- 💻 Core languages: **C++**, **C#**
-- 🌐 Also build full-stack **web apps** and **games**
-- 🕹️ Built a fully functional **Metal Slug**-style 2D shooter in C++ with SFML — infinite procedurally generated world, a self-playing AI trained with NEAT, and voice-command launch via FFT
-- 🧰 Also make sprite/game-dev tooling and web tools
+- 🎓 2nd Year **Computer Science** student at **FAST-NUCES**
+- 💻 Strong foundation in **C++** and **C#**
+- 🌐 Build modern **Full-Stack Web Applications**
+- 🤖 Passionate about **Artificial Intelligence** and automation
+- 🎮 Enjoy creating games, developer tools, and interactive experiences
+- 📚 Always learning new technologies and solving challenging problems
 
-### Featured projects
+---
 
-| Project | What it is |
-|---|---|
-| [Metal Slug](https://github.com/i250817-oss/Metal-Slug) | 2D shooter in C++/SFML — Perlin-noise infinite world, NEAT self-playing AI, FFT voice launch |
-| [SP_Rite Width Finder](https://github.com/i250817-oss/SP_Rite-Width-Finder) | Web tool that auto-detects sprite coordinates, width, height, and pixel positions for game devs |
-| [Solar Energy Optimization](https://github.com/i250817-oss/Solar-Energy-Optimization-WANT) | Multivariable calculus project modeling photovoltaic solar panel output with linear regression |
+# 🏆 Featured Projects
 
-### Connect
+| Project | Description |
+|---------|-------------|
+| 🚀 **[Metal Slug](https://github.com/i250817-oss/Metal-Slug)** | A complete 2D shooter built in **C++ & SFML** featuring an infinite procedurally generated world, NEAT-powered AI player, and FFT voice-command launching. |
+| 🛠️ **[SP_Rite Width Finder](https://github.com/i250817-oss/SP_Rite-Width-Finder)** | Tool that automatically detects sprite boundaries, dimensions, and pixel coordinates for game development workflows. |
+| ☀️ **[Solar Energy Optimization](https://github.com/i250817-oss/Solar-Energy-Optimization-WANT)** | Multivariable calculus project analyzing photovoltaic solar panel efficiency using mathematical modeling and linear regression. |
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-ahmad--ali--745606385-blue?logo=linkedin)](https://linkedin.com/in/ahmad-ali-745606385)
+---
 
-<sub>ASCII terminal render above is animated (flicker + scanline) — SVG, no JS, runs natively in this README.</sub>
+# 🛠 Tech Stack
+
+**Languages**
+
+`C++` `C#` `JavaScript` `TypeScript`
+
+**Frontend**
+
+`React` `HTML` `CSS` `Tailwind CSS`
+
+**Backend**
+
+`Node.js` `Express` `Supabase`
+
+**Game Development**
+
+`SFML` `NEAT AI`
+
+**Tools**
+
+`Git` `GitHub` `VS Code`
+
+---
+
+# 📫 Connect With Me
+
+<p align="center">
+
+<a href="mailto:ahmadaliofficial1155@gmail.com">
+<img src="https://img.shields.io/badge/Email-Contact%20Me-D14836?style=for-the-badge&logo=gmail&logoColor=white"/>
+</a>
+
+<a href="https://www.linkedin.com/in/ahmad-ali-745606385/">
+<img src="https://img.shields.io/badge/LinkedIn-Ahmad%20Ali-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white"/>
+</a>
+
+</p>
+
+---
+
+<p align="center">
+<i>Animated ASCII portrait above is rendered entirely using SVG with scanline and flicker effects.</i>
+</p>
