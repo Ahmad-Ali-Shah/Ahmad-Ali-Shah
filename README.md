@@ -23,12 +23,12 @@
 
 # 🚀 About Me
 
-- 🎓 2nd Year **Computer Science** student at **FAST-NUCES**
-- 💻 Strong foundation in **C++** 
-- 🌐 Build modern **Full-Stack Web Applications**
-- 🤖 Passionate about **Artificial Intelligence** and automation
-- 🎮 Enjoy creating games, developer tools, and interactive experiences
-- 📚 Always learning new technologies and solving challenging problems
+-  2nd Year **Computer Science** student at **FAST-NUCES**
+-  Strong foundation in **C++** 
+-  Build modern **Full-Stack Web Applications**
+-  Passionate about **Artificial Intelligence** and automation
+-  Enjoy creating games, developer tools, and interactive experiences
+-  Always learning new technologies and solving challenging problems
 
 ---
 
