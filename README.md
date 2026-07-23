@@ -1,10 +1,6 @@
 <p align="center">
-  <img src="assets/ascii-face.svg" width="480" alt="ascii terminal art" />
+  <img src="assets/profile.jpg" width="480" alt="Profile photo" />
 </p>
-
-<h1 align="center">Hi, I'm Ahmad Ali 👋</h1>
-<p align="center">2nd year Computer Science student @ FAST-NUCES · AI enthusiast</p>
-
 ---
 
 ### About me
