@@ -83,5 +83,5 @@
 ---
 
 <p align="center">
-<i>Animated ASCII portrait above is rendered entirely using SVG with scanline and flicker effects.</i>
+<i>Thanks for visiting :p</i>
 </p>
