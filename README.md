@@ -1,5 +1,5 @@
 <p align="center">
- <img src="./assets/ascii-face.png" width="700" alt="ASCII Art">
+<img src="assets/ascii-face.svg" width="480" alt="ASCII portrait" /> <img src="./assets/ascii-face.png" width="700" alt="ASCII Art">
 </p>
 ---
 
