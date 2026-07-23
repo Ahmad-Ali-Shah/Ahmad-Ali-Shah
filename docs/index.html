@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ahmad Ali — ASCII Reveal</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #000;
+  }
+  #wrap {
+    width: 100%;
+    height: 100vh;
+    display: block;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="c"></canvas>
+</div>
+
+<script>
+// ---- Same defaults/logic as the Originkit AsciiImage component, ported to vanilla JS ----
+const SRC = "assets/face.png";
+
+const DEFAULTS = {
+  fit: "cover",           // "cover" | "contain"
+  focusY: 19,
+  columns: 200,
+  ramp: " .:-=+*#%@",
+  invert: false,
+  contrast: 100,
+  colorMode: "mono",      // "mono" | "image"
+  inkColor: "#FFFFFF",
+  reveal: true,
+  revealOptions: { size: 80, softness: 16 },
+};
+
+const contrastAt = (value) => 0.5 + (value / 100) * 2;
+const clampFocus = (value) => Math.min(100, Math.max(0, typeof value === "number" ? value : 50));
+
+function placeRect(imgW, imgH, boxW, boxH, fit, focusY) {
+  const scale = fit === "contain"
+    ? Math.min(boxW / imgW, boxH / imgH)
+    : Math.max(boxW / imgW, boxH / imgH);
+  const dw = imgW * scale;
+  const dh = imgH * scale;
+  const f = fit === "cover" ? clampFocus(focusY) / 100 : 0.5;
+  return { dx: (boxW - dw) / 2, dy: (boxH - dh) * f, dw, dh };
+}
+
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+
+let offCanvas = document.createElement("canvas");
+let samplerCanvas = document.createElement("canvas");
+let revealCanvas = document.createElement("canvas");
+let maskCanvas = document.createElement("canvas");
+
+let img = null;
+let coverRect = { dx: 0, dy: 0, dw: 0, dh: 0 };
+let blobs = Array.from({ length: 5 }, () => ({ x: 0, y: 0 }));
+let seeded = false;
+let pointer = { x: -9999, y: -9999, inside: false };
+let raf = 0;
+
+function getSize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = canvas.clientWidth || 600;
+  const h = canvas.clientHeight || 600;
+  return { w, h, dpr };
+}
+
+function buildAscii() {
+  if (!img) return;
+  const { w, h, dpr } = getSize();
+  canvas.width = Math.max(1, Math.round(w * dpr));
+  canvas.height = Math.max(1, Math.round(h * dpr));
+
+  const cols = Math.max(8, Math.round(DEFAULTS.columns));
+  const cellW = (w * dpr) / cols;
+  const fontPx = cellW * 1.7;
+  const cellH = fontPx;
+  const rows = Math.max(1, Math.floor((h * dpr) / cellH));
+
+  samplerCanvas.width = cols;
+  samplerCanvas.height = rows;
+  const sctx = samplerCanvas.getContext("2d", { willReadFrequently: true });
+
+  const place = placeRect(img.width, img.height, canvas.width, canvas.height, DEFAULTS.fit, DEFAULTS.focusY);
+  sctx.clearRect(0, 0, cols, rows);
+  sctx.drawImage(img, place.dx / cellW, place.dy / cellH, place.dw / cellW, place.dh / cellH);
+
+  let data;
+  try {
+    data = sctx.getImageData(0, 0, cols, rows).data;
+  } catch (e) {
+    console.error("Could not read image data (CORS?). Serve this over http/https, not file://", e);
+    return;
+  }
+
+  offCanvas.width = canvas.width;
+  offCanvas.height = canvas.height;
+  const octx = offCanvas.getContext("2d");
+  octx.clearRect(0, 0, offCanvas.width, offCanvas.height);
+  octx.font = fontPx.toFixed(2) + "px ui-monospace, monospace";
+  octx.textBaseline = "top";
+
+  const chars = DEFAULTS.ramp;
+  const punch = contrastAt(DEFAULTS.contrast);
+  const last = chars.length - 1;
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const i = (r * cols + c) * 4;
+      const rr = data[i], gg = data[i + 1], bb = data[i + 2];
+      let lum = (0.299 * rr + 0.587 * gg + 0.114 * bb) / 255;
+      lum = (lum - 0.5) * punch + 0.5;
+      if (DEFAULTS.invert) lum = 1 - lum;
+      lum = lum < 0 ? 0 : lum > 1 ? 1 : lum;
+      const ch = chars[Math.round(lum * last)];
+      if (ch === " ") continue;
+      octx.fillStyle = DEFAULTS.colorMode === "image"
+        ? `rgb(${Math.min(255, rr + 30)}, ${Math.min(255, gg + 30)}, ${Math.min(255, bb + 30)})`
+        : DEFAULTS.inkColor;
+      octx.fillText(ch, c * cellW, r * cellH);
+    }
+  }
+
+  coverRect = place;
+}
+
+function ensureLayer(layer) {
+  if (layer.width !== canvas.width || layer.height !== canvas.height) {
+    layer.width = canvas.width;
+    layer.height = canvas.height;
+  }
+  return layer;
+}
+
+function updateBlobs() {
+  const { dpr } = getSize();
+  const tx = pointer.x * dpr;
+  const ty = pointer.y * dpr;
+  if (!seeded) {
+    for (const b of blobs) { b.x = tx; b.y = ty; }
+    seeded = true;
+    return;
+  }
+  blobs[0].x += (tx - blobs[0].x) * 0.35;
+  blobs[0].y += (ty - blobs[0].y) * 0.35;
+  for (let i = 1; i < blobs.length; i++) {
+    blobs[i].x += (blobs[i - 1].x - blobs[i].x) * 0.35;
+    blobs[i].y += (blobs[i - 1].y - blobs[i].y) * 0.35;
+  }
+}
+
+function paint() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(offCanvas, 0, 0);
+
+  if (!DEFAULTS.reveal || !pointer.inside || !img) return;
+
+  const { dpr } = getSize();
+  const photo = ensureLayer(revealCanvas);
+  const pctx = photo.getContext("2d");
+  const mask = ensureLayer(maskCanvas);
+  const mctx = mask.getContext("2d");
+
+  pctx.globalCompositeOperation = "source-over";
+  pctx.clearRect(0, 0, photo.width, photo.height);
+  pctx.drawImage(img, coverRect.dx, coverRect.dy, coverRect.dw, coverRect.dh);
+
+  mctx.clearRect(0, 0, mask.width, mask.height);
+  mctx.save();
+  mctx.filter = `blur(${(DEFAULTS.revealOptions.softness * dpr).toFixed(1)}px)`;
+  mctx.fillStyle = "#FFFFFF";
+  for (let i = 0; i < blobs.length; i++) {
+    const t = blobs.length <= 1 ? 0 : i / (blobs.length - 1);
+    const radius = DEFAULTS.revealOptions.size * dpr * (1 - t * 0.5);
+    mctx.beginPath();
+    mctx.arc(blobs[i].x, blobs[i].y, radius, 0, Math.PI * 2);
+    mctx.fill();
+  }
+  mctx.restore();
+
+  pctx.globalCompositeOperation = "destination-in";
+  pctx.drawImage(mask, 0, 0);
+  pctx.globalCompositeOperation = "source-over";
+  ctx.drawImage(photo, 0, 0);
+}
+
+function loop() {
+  updateBlobs();
+  paint();
+  raf = requestAnimationFrame(loop);
+}
+
+function onMove(e) {
+  const rect = canvas.getBoundingClientRect();
+  pointer.x = e.clientX - rect.left;
+  pointer.y = e.clientY - rect.top;
+  pointer.inside = pointer.x >= 0 && pointer.y >= 0 && pointer.x <= rect.width && pointer.y <= rect.height;
+}
+function onLeave() {
+  pointer.inside = false;
+  seeded = false;
+}
+
+// auto-drift the reveal spot when nobody's touching the mouse, so it's never static
+let driftT = 0;
+function autoDrift() {
+  if (pointer.inside) return;
+  const { w, h } = getSize();
+  driftT += 0.006;
+  pointer.x = w / 2 + Math.cos(driftT) * w * 0.28;
+  pointer.y = h / 2 + Math.sin(driftT * 1.3) * h * 0.28;
+  pointer.inside = true;
+  seeded = true;
+}
+setInterval(autoDrift, 16);
+
+img = new Image();
+img.crossOrigin = "anonymous";
+img.onload = () => {
+  buildAscii();
+  paint();
+  raf = requestAnimationFrame(loop);
+};
+img.onerror = () => {
+  console.error("Image failed to load. If you opened this file directly (file://), run it through a local server instead — see SETUP_INSTRUCTIONS.md");
+};
+img.src = SRC;
+
+new ResizeObserver(() => { buildAscii(); paint(); }).observe(canvas);
+canvas.addEventListener("pointermove", onMove);
+canvas.addEventListener("pointerleave", onLeave);
+</script>
+</body>
+</html>
